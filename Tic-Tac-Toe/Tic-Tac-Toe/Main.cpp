@@ -22,11 +22,20 @@ bool playerHasQuit = false;
 bool isGameFinished = false;
 bool canPlayerInput = true;
 
+// Boolean for the playPVC() function
+// to allow the compiler to display the computer's score
+bool isComputerPlaying = false;
+
 // Variables to store players names and
 // the title of the game mode
 string players;
 string player1, player2;
 string gameModeTitle;
+
+// Variable to store Computer wins
+// Only for the playPVC() game mode
+int computerScore = 0;
+
 
 // Screen to show Main menu and options for Main Menu
 enum Menu {
@@ -77,6 +86,7 @@ void fill();
 // Screens to show how to play the game and who made it
 void showInstructions();
 void showCredits();
+void showQuitScreen();
 
 // Starts the program
 int main()
@@ -111,16 +121,15 @@ int main()
 	}
 
 	// Quit was chosen, ending while loop.
+	// Shows a quit screen
+	showQuitScreen();
 
-	system("cls"); // Clears screen
-	cout << "u quite u poofy" << endl;
-	// show some quitting ting
 	return 0;
 }
 
-/*******************************************************************/
-// The Menu Functions for the UI
-/*******************************************************************/
+/***********************************************************************/
+//					 The Menu Functions for the UI
+/***********************************************************************/
 // Shows menu and waits for valid choice. (see enum Menu)
 // Input is player's choice.
 // Checks if choice is valid.
@@ -239,9 +248,9 @@ int GameMode()
 
 
 
-/*******************************************************************/
-// The game modes that the player can play
-/*******************************************************************/
+/***********************************************************************/
+//				The game modes that the player can play
+/***********************************************************************/
 
 // 2 Player mode of Tic-Tac-Toe
 void playPVP()
@@ -324,6 +333,10 @@ void playPVC()
 {
 	// Player can input in this game mode
 	canPlayerInput = true;
+
+	// Computer can input
+	isComputerPlaying = true;
+
 	system("cls");	// Clears screen
 	cout << "\t" << "--------------------------------------" << endl;
 	cout << "\t\t" << "Player vs Computer" << endl;
@@ -331,7 +344,30 @@ void playPVC()
 	cout << "\t" << "Enter player 1(X) name: ";
 	cin >> player1;
 	system("cls");	// Clears screen
-	cout << "\n\n\t " << player1 << " is gonna have a bad time... ";
+	cout << "\n\n\t " << player1 << " is gonna have a bad time... \n\n";
+	cout << "\t            ****************\n" <<
+		"\t       *****                *****\n" <<
+		"\t    ***                          ***\n" <<
+		"\t   *                                *\n" <<
+		"\t *                                    *\n" <<
+		"\t *                                    *\n" <<
+		"\t*                                      *\n" <<
+		"\t*      *******            *******      *\n" <<
+		"\t*    **     ***          **********    *\n" <<
+		"\t*   **   *   **          ***********   *\n" <<
+		"\t *  ***     **            **********  *\n" <<
+		"\t *    *******      ***     *******    *\n" <<
+		"\t  *       **      *****     **       *\n" <<
+		"\t  *     ***       *****      ***     *\n" <<
+		"\t *                *****               *\n" <<
+		"\t *                                    *\n" <<
+		"\t *     *                        *     *\n" <<
+		"\t  *   ** **                  ** **   *\n" <<
+		"\t  *    * **** **** **** *** *** *    *\n" <<
+		"\t   *     **** **** **** *** ***     *\n" <<
+		"\t    **     ** **** **** *** *     **\n" <<
+		"\t      ****                    ****\n" <<
+		"\t          ********************";
 	Sleep(1000);	// 1 second delay
 	player2 = "Computaar";	// AI name will be set to Computaar
 	system("cls");	// Clears screen
@@ -363,6 +399,7 @@ void playPVC()
 		// Outcomes of the game
 		// Sets both booleans isGameFinished and playerHasQuit 
 		// to true to avoid any compiler misunderstandings
+		// If computer wins, adds 1 to score of the computer
 		if (gameOver() == 'X') {
 			cout << "\t\t" << player1 << " wins!" << endl;
 			isGameFinished = true;
@@ -370,6 +407,7 @@ void playPVC()
 		}
 		else if (gameOver() == 'O') {
 			cout << "\t\t" << player2 << " wins!" << endl;
+			computerScore += 1;
 			isGameFinished = true;
 			playerHasQuit = true;
 		}
@@ -393,7 +431,7 @@ void playPVC()
 			system("cls");
 			playerHasQuit = false;
 			isGameFinished = false;
-			playPVP();
+			playPVC();
 		}
 		else if (choice == 'N') {
 			cout << "\t\t" << "Loading..." << endl;
@@ -401,8 +439,9 @@ void playPVC()
 			system("cls");
 		}
 	}
-	// Reset playerHasQuit back to false
+	// Reset playerHasQuit and isComputerPlaying back to false
 	playerHasQuit = false;
+	isComputerPlaying = false;
 	system("cls");	// Clears the screen
 }
 
@@ -485,23 +524,23 @@ void playCVC()
 			system("cls");
 			playerHasQuit = false;
 			isGameFinished = false;
-			playPVP();
+			playCVC();
 		}
 		else if (choice == 'N') {
 			cout << "\t\t" << "Loading..." << endl;
 			Sleep(500);	// Creates a 0.5 second delay
 			system("cls");
 		}
+		// Resets boolean after game mode is finished
+		canPlayerInput = true;
 	}
-	// Resets boolean after game mode is finished
-	canPlayerInput = true;
 	system("cls");	// Clears the screen
 }
 
 
-/*******************************************************************/
-// The functions for input and how to end the game
-/*******************************************************************/
+/***********************************************************************/
+//		 The functions for input and how to end the game
+/***********************************************************************/
 
 // Takes a turn input by replacing the letter in the field
 // with an 'X' or 'O'
@@ -1251,10 +1290,10 @@ char gameOver()
 }
 
 
-/*******************************************************************/
-// Utility functions which toggles the names, turns
-// populates the board and draws the board onto the screen
-/*******************************************************************/
+/***********************************************************************/
+//			 Utility functions which toggles the names, turns
+//		 populates the board and draws the board onto the screen
+/***********************************************************************/
 
 // Toggles the symbol for each player
 // If turn is 'X' switches to 'O' and vice versa
@@ -1288,6 +1327,8 @@ void drawBoard()
 
 	cout << "\n\n";
 	cout << "\t\t" << "--------------------------------------" << endl;
+	// Conditional statements to properly place the titles of the game modes
+	// without looking ugly
 	if (canPlayerInput == false) {
 		cout << "\t\t\t" << gameModeTitle << endl;
 	}
@@ -1295,10 +1336,15 @@ void drawBoard()
 	cout << "\t\t\t" << gameModeTitle << endl;
 	}
 
-	cout << "\t\t" << "--------------------------------------" << "\n\n";
+	cout << "\t\t" << "--------------------------------------" << endl;
+	// Displays the score of the computer
+	if (isComputerPlaying == true) {
+		cout << "\t\t\t" << player2 << " Score: [" << computerScore << "]\n\n";
+	}
+	// Displays the name of the two AI with a proper position
 	if (canPlayerInput == false) {
 		cout << "\t\t" << player1 << " (X) " << "\t" << player2 << " (O) " << "\n\n";
-	}
+	}	// Displays the name of the two players instead
 	else {
 		cout << "\t\t" << player1 << " (X) " << "\t" << player2 << " (O) " << "\n\n";
 	}
@@ -1333,20 +1379,83 @@ void fill()
 }
 
 
-/*******************************************************************/
-// Screens to show how to play the game and who made it
-/*******************************************************************/
+/***********************************************************************/
+// Screens to show how to play the game, who made it and a quit screen
+/***********************************************************************/
 
 // Shows the credits screen
 // Shows who made the game
 void showCredits()
 {
-
+	system("cls");	// Clears  screen
+	cout << "\n\t\t Created By: Angelo Estoque\n\n";
+	cout << "\t\t   Thank you for playing! \n";
+	cout << "\n\t---------------------------------------------------\n";
+	cout << "\t\tPress any key to return to the menu.           \n";
+	cout << "\t---------------------------------------------------\n";
+	_getch();       // Waits for keypress
+	system("cls");  // Clears screen
+	cout << "\n\tLoading...";
+	Sleep(250);	// Adds a 0.25 second delay
+	system("cls");	// Clears screen
 }
 
 // Shows the instructions screen
 // Tells player how to play the game
 void showInstructions()
 {
+	system("cls");	// Clears screen
+	cout << "\t\t Toe-Tac-Tic\n\n";
+	cout << "\t Choose a cell lettered from A to I as below.\n";
+	cout << "\t Enter the letter and try to win.\n\n";
+	cout << "\t\t  A | B | C\n";
+	cout << "\t\t -----------\n";
+	cout << "\t\t  D | E | F\n";
+	cout << "\t\t -----------\n";
+	cout << "\t\t  G | H | I\n\n";
 
+	cout << "\t To win you need to get a three of a kind (shown below with 'X')\n\n";
+	cout << "\t\t[ X | X | X ]\n";
+	cout << "\t\t -----------\n";
+	cout << "\t\t  D | E | F\n";
+	cout << "\t\t -----------\n";
+	cout << "\t\t  G | H | I\n";
+	cout << "\n\t---------------------------------------------------\n";
+	cout << "\t\tPress any key to return to the menu.          \n";
+	cout << "\t---------------------------------------------------\n";
+	_getch();	// Waits for keypress
+	system("cls");	// Clears screen
+	cout << "\n\tLoading...";
+	Sleep(250);	// Adds a 0.25 second delay
+	system("cls");	// Clears screen
+}
+
+void showQuitScreen()
+{
+	system("cls"); // Clears screen
+	cout << "\n\t\t    See you next time\n\n";
+
+	cout << "\t            ****************\n" <<
+		"\t       *****                *****\n" <<
+		"\t    ***                          ***\n" <<
+		"\t   *                                *\n" <<
+		"\t *                                    *\n" <<
+		"\t *                                    *\n" <<
+		"\t*                                      *\n" <<
+		"\t*      ******             **     **    *\n" <<
+		"\t*    **     **              **  **     *\n" <<
+		"\t*   **       **               **       *\n" <<
+		"\t *   **     **              **  **    *\n" <<
+		"\t *    *******      ***    **      **  *\n" <<
+		"\t  *               *****              *\n" <<
+		"\t  *               *****              *\n" <<
+		"\t *                *****               *\n" <<
+		"\t *                                    *\n" <<
+		"\t *     *                        *     *\n" <<
+		"\t  *   ** **                  ** **   *\n" <<
+		"\t  *    * **** **** **** *** *** *    *\n" <<
+		"\t   *     **** **** **** *** ***     *\n" <<
+		"\t    **     ** **** **** *** *     **\n" <<
+		"\t      ****                    ****\n" <<
+		"\t          ********************";
 }
